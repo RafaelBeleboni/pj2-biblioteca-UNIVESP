@@ -73,7 +73,12 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 #region Database
 builder.Services.AddDbContext<LibraryContext>(options =>
 {
-    options.UseMySQL(builder.Configuration.GetConnectionString("LibraryContext") ?? "");
+    var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new Exception("Connection string is missing!");
+    }
+    options.UseMySQL(connectionString);
 });
 #endregion
 
