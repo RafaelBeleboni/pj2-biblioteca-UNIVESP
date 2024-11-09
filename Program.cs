@@ -15,9 +15,13 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
+
 builder.Services.AddControllers();
 
 #region swagger
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -78,15 +82,15 @@ builder.Services.AddDbContext<LibraryContext>(options =>
 });
 #endregion
 
-// Configuração do CORS para permitir qualquer origem
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
+    options.AddPolicy("AllowEspecificOrigin",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
 });
 
 #region Token Configuration
@@ -118,14 +122,21 @@ app.UseSwaggerUI();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<LibraryContext>();
-    context.Database.Migrate();
+
+    
+
 }
 
-// Configura o CORS para todos os ambientes
-app.UseCors("AllowAllOrigins");
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("AllowEspecificOrigin");
+}
 
 app.UseHttpsRedirection();
+
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
