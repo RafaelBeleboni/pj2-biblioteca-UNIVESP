@@ -124,7 +124,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     
-    context.Database.Migrate();
+
 }
 
 // Configure the HTTP request pipeline.
