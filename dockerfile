@@ -4,11 +4,12 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 EXPOSE 10000
+EXPOSE 5001
 
 # Etapa de build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY . .
+COPY . . 
 RUN dotnet restore "BookManagementBackend.csproj"
 RUN dotnet publish "BookManagementBackend.csproj" -c Release -o /app/publish
 

@@ -17,7 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 
-
 builder.Services.AddControllers();
 
 #region swagger
@@ -73,24 +72,18 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 #region Database
 builder.Services.AddDbContext<LibraryContext>(options =>
 {
-    var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        throw new Exception("Connection string is missing!");
-    }
-    options.UseMySQL(connectionString);
+    options.UseMySQL(builder.Configuration.GetConnectionString("LibraryContext") ?? "");
 });
 #endregion
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowEspecificOrigin",
-        builder =>
+        builder =>             
         {
             builder.AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
-                
         });
 });
 
@@ -117,6 +110,10 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+// Definir a URL para a aplicação escutar
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://0.0.0.0:{port}");
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -124,8 +121,8 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    
-
+    var context = services.GetRequiredService<LibraryContext>();
+    context.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
@@ -134,7 +131,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors("AllowEspecificOrigin");
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
