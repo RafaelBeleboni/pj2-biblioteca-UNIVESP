@@ -14,6 +14,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Console.WriteLine("Aplicação iniciada com novas configurações!");
+
 // Add services to the container.
 
 
@@ -111,7 +113,7 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 // Definir a URL para a aplicação escutar
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5001";
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.UseSwagger();
@@ -131,7 +133,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors("AllowEspecificOrigin");
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection(); //modificado
 
 app.UseAuthorization();
 
