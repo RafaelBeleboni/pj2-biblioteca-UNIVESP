@@ -80,7 +80,7 @@ builder.Services.AddDbContext<LibraryContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowEspecificOrigin",
+    options.AddPolicy("AllowAll",
         builder =>             
         {
             builder.AllowAnyOrigin()
@@ -130,7 +130,7 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("AllowEspecificOrigin");
+    app.UseCors("AllowAll");
 }
 
 app.UseHttpsRedirection(); //modificado
